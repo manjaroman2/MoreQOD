@@ -21,10 +21,10 @@ namespace MoreQOD
         public SpriteManager()
         {
             _bundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath,
-                Path.Combine(Application.dataPath, "../Mods/MoreQualityOfDeath"), "MoreQualityOfDeathAssets"));
+                Path.Combine(Application.dataPath, "../Mods/MoreQOD"), "MoreQODAssets"));
             if (_bundle == null)
             {
-                MelonLogger.Error("Could not load asset bundle MoreQualityOfDeathAssets");
+                MelonLogger.Error("Could not load asset bundle MoreQODAssets");
             }
             else
             {

@@ -34,5 +34,5 @@ using MelonLoader;
 // [assembly: AssemblyVersion("1.0.*")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
-[assembly: MelonInfo(typeof(MoreQOD.MoreQOD), "MoreQualityOfDeath", "0.0.3", "Marc")]
+[assembly: MelonInfo(typeof(MoreQOD.MoreQOD), "MoreQOD", "0.0.6", "Marc")]
 [assembly: MelonGame("Realm Archive", "Death Must Die")]
