@@ -97,7 +97,7 @@ namespace MoreQOD
             private static void PRE_OnDestroy(ref ItemPickUp __instance)
             {
                 if (!DroppedItems.ContainsKey(__instance)) return;
-                // MelonLogger.Msg($"Removed item at {MoreQualityOfDeath.DroppedItems[__instance]}");
+                // MelonLogger.Msg($"Removed item at {MoreQOD.DroppedItems[__instance]}");
                 DroppedItems.Remove(__instance);
                 OnItemCollected(__instance);
             }

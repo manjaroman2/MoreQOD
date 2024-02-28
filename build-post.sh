@@ -3,7 +3,7 @@
 name="MoreQOD"
 source="/home/marc/RiderProjects/MoreQOD/bin"
 asset="/home/marc/dev/MoreQODAssets/Assets/AssetBundles/moreqodassets"
-mods="/home/marc/Death\ Must\ Die/Mods"
+mods="/home/marc/Death Must Die/Mods"
 
 moddir="${mods}/${name}"
 mkdir -p "${moddir}"
@@ -41,8 +41,17 @@ fi
 pkill -HUP "Death Must Die"
 # ps aux | grep -i "Death Must Die" | awk '{print $2}' | xargs kill -9
 # echo "${moddir}/${name}Assets"
-cp -f "${asset}" "${moddir}/${name}Assets"
-cp -f "${source}" "${mods}"
+
+echo "rm ${moddir}/${name}Assets"
+rm "${moddir}/${name}Assets" 
+cp "${asset}" "${moddir}/${name}Assets" 
+echo "${asset} -> ${moddir}/${name}Assets" 
+
+echo "rm ${mods}/${dll}"
+rm "${mods}/${dll}"
+cp "${source}" "${mods}/${dll}"
+echo "${source} -> ${mods}/${dll}"
+ 
 steam steam://rungameid/2334730
 
 # cp -rf ~/MoreQualityOfDeath/Assets/AssetBundles/morequalityofdeath MoreQualityOfDeath/MoreQualityOfDeathAssets

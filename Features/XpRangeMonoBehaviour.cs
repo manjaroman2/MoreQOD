@@ -29,7 +29,7 @@ namespace MoreQOD
             line = GetComponent<LineRenderer>();
     
             line.material = MoreQOD.Materials["Sprite-Lit-Default (Instance)"];
-            // line.material = MoreQualityOfDeath.Materials["Mat_None (Instance)"];
+            // line.material = MoreQOD.Materials["Mat_None (Instance)"];
             line.startColor = Color.red;
             line.endColor = Color.red;
             line.startWidth = 2.2f;

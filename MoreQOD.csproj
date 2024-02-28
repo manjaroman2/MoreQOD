@@ -12,28 +12,29 @@
         <AssemblyName>MoreQOD</AssemblyName>
         <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
         <FileAlignment>512</FileAlignment>
+        <LangVersion>latestmajor</LangVersion>
+    </PropertyGroup>
+    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+      <DebugType>none</DebugType>
+      <Optimize>true</Optimize>
+      <DefineConstants>TRACE</DefineConstants>
+      <ErrorReport>prompt</ErrorReport>
+      <WarningLevel>4</WarningLevel>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+      <OutputPath>bin\Release\</OutputPath>
     </PropertyGroup>
     <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-        <PlatformTarget>AnyCPU</PlatformTarget>
         <DebugSymbols>true</DebugSymbols>
         <DebugType>full</DebugType>
         <Optimize>false</Optimize>
-        <OutputPath>bin\Debug\</OutputPath>
         <DefineConstants>DEBUG;TRACE</DefineConstants>
         <ErrorReport>prompt</ErrorReport>
         <WarningLevel>4</WarningLevel>
-    </PropertyGroup>
-    <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-        <PlatformTarget>AnyCPU</PlatformTarget>
-        <DebugType>pdbonly</DebugType>
-        <Optimize>true</Optimize>
-        <OutputPath>bin\Release\</OutputPath>
-        <DefineConstants>TRACE</DefineConstants>
-        <ErrorReport>prompt</ErrorReport>
-        <WarningLevel>4</WarningLevel>
+      <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+      <OutputPath>bin\Debug\</OutputPath>
     </PropertyGroup>
     <PropertyGroup>
-      <PostBuildEvent>/home/marc/RiderProjects/MoreQOD/do.sh $(ConfigurationName)</PostBuildEvent>
+      <PostBuildEvent>/home/marc/RiderProjects/MoreQOD/build-post.sh $(Configuration)</PostBuildEvent>
     </PropertyGroup>
     <ItemGroup>
         <Reference Include="0Harmony">

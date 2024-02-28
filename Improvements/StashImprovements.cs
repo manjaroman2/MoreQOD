@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Reflection;
 using Death.App;
 using Death.Items;
 using Death.Run.UserInterface.Items;
@@ -8,6 +10,35 @@ namespace MoreQOD
 {
     public static class StashImprovements
     {
+        private static readonly MethodInfo StashTabManager_SelectPrev =
+            typeof(GUI_StashTabManager).GetMethod(nameof(GUI_StashTabManager.SelectPrev), AccessTools.all);
+
+        private static readonly MethodInfo StashTabManager_SelectNext =
+            typeof(GUI_StashTabManager).GetMethod(nameof(GUI_StashTabManager.SelectPrev), AccessTools.all);
+
+        private static readonly MethodInfo ItemManagerStash_SelectPrevTab =
+            typeof(GUI_ItemManager_Stash).GetMethod("SelectPrevTab", AccessTools.all);
+
+        private static readonly MethodInfo ItemManagerStash_SelectNextTab =
+            typeof(GUI_ItemManager_Stash).GetMethod("SelectNextTab", AccessTools.all);
+
+        private static GUI_ItemManager_Stash ItemManagerStash; 
+        private static GUI_StashTabManager StashTabManager; 
+        public static void NextPage()
+        {
+            if (ItemManagerStash == null) return;
+            if (typeof(GUI_TabManager<int>).GetField("_activeInstances", AccessTools.all)
+                    ?.GetValue(StashTabManager) is List<GUI_Tab<int>> activeInstances) MelonLogger.Msg(activeInstances.Count);
+            ItemManagerStash_SelectPrevTab.Invoke(ItemManagerStash, null);
+        }
+
+        public static void PreviousPage()
+        {
+            if (ItemManagerStash == null) return;
+            if (typeof(GUI_TabManager<int>).GetField("_activeInstances", AccessTools.all)
+                    ?.GetValue(StashTabManager) is List<GUI_Tab<int>> activeInstances) MelonLogger.Msg(activeInstances.Count);
+            ItemManagerStash_SelectNextTab.Invoke(ItemManagerStash, null);
+        }
         /*
         public static GUI_StashTabManager StashTabManager;
         public static GUI_ItemManager_Stash ItemManagerStash;

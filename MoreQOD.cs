@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
-using Death.Run.Behaviours.Entities;
 using Death.Run.UserInterface.Items;
 using HarmonyLib;
 using MelonLoader;
@@ -11,23 +10,9 @@ namespace MoreQOD
 {
     public class MoreQOD : MelonMod
     {
-        private static readonly MethodInfo StashTabManager_SelectPrev =
-            typeof(GUI_StashTabManager).GetMethod(nameof(GUI_StashTabManager.SelectPrev), AccessTools.all);
+        public static readonly Dictionary<string, Material> Materials = new();
 
-        private static readonly MethodInfo StashTabManager_SelectNext =
-            typeof(GUI_StashTabManager).GetMethod(nameof(GUI_StashTabManager.SelectPrev), AccessTools.all);
-
-        private static readonly MethodInfo ItemManagerStash_SelectPrevTab =
-            typeof(GUI_ItemManager_Stash).GetMethod("SelectPrevTab", AccessTools.all);
-
-        private static readonly MethodInfo ItemManagerStash_SelectNextTab =
-            typeof(GUI_ItemManager_Stash).GetMethod("SelectNextTab", AccessTools.all);
-
-
-        public static readonly Dictionary<string, Material> Materials = new Dictionary<string, Material>();
-
-        public static readonly Dictionary<string, TMP_SpriteAsset> spriteAssets =
-            new Dictionary<string, TMP_SpriteAsset>();
+        public static readonly Dictionary<string, TMP_SpriteAsset> spriteAssets = new();
 
         public static bool IsRun;
         public static SpriteManager spriteManager;
@@ -73,23 +58,14 @@ namespace MoreQOD
             {
                 XpRange.toggle();
             }
-
-            /*
             else if (Input.GetKeyDown(KeyCode.O))
             {
-                if (ItemManagerStash == null) return;
-                if (typeof(GUI_TabManager<int>).GetField("_activeInstances", AccessTools.all)
-                        ?.GetValue(StashTabManager) is List<GUI_Tab<int>> activeInstances) MelonLogger.Msg(activeInstances.Count);
-                ItemManagerStash_SelectPrevTab.Invoke(ItemManagerStash, null);
+                StashImprovements.NextPage();
             }
             else if (Input.GetKeyDown(KeyCode.P))
             {
-                if (ItemManagerStash == null) return;
-                if (typeof(GUI_TabManager<int>).GetField("_activeInstances", AccessTools.all)
-                        ?.GetValue(StashTabManager) is List<GUI_Tab<int>> activeInstances) MelonLogger.Msg(activeInstances.Count);
-                ItemManagerStash_SelectNextTab.Invoke(ItemManagerStash, null);
+                StashImprovements.PreviousPage();
             }
-             */
         }
     }
 }

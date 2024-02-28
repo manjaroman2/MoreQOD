@@ -20,6 +20,7 @@ namespace MoreQOD
 
         public SpriteManager()
         {
+            MelonLogger.Msg(Application.dataPath);
             _bundle = AssetBundle.LoadFromFile(Path.Combine(Application.streamingAssetsPath,
                 Path.Combine(Application.dataPath, "../Mods/MoreQOD"), "MoreQODAssets"));
             if (_bundle == null)
