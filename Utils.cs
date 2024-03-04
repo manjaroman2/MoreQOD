@@ -17,13 +17,11 @@ namespace MoreQOD
     {
         public static void PrintShopTreasureClasses()
         {
-            using (IEnumerator<ShopTreasureClass> empEnumerator = Database.ShopTreasureClasses.GetEnumerator())
+            using IEnumerator<ShopTreasureClass> empEnumerator = Database.ShopTreasureClasses.GetEnumerator();
+            while (empEnumerator.MoveNext())
             {
-                while (empEnumerator.MoveNext())
-                {
-                    ShopTreasureClass sc = empEnumerator.Current;
-                    MelonLogger.Msg($"{sc?.TreasureClass} {sc?.FirstAppearPlayTimeMin} {sc?.Weight}");
-                }
+                ShopTreasureClass sc = empEnumerator.Current;
+                MelonLogger.Msg($"{sc?.TreasureClass} {sc?.FirstAppearPlayTimeMin} {sc?.Weight}");
             }
         }
 
@@ -31,7 +29,7 @@ namespace MoreQOD
         {
             Dictionary<string, TMP_SpriteAsset> allSpriteAssets = new Dictionary<string, TMP_SpriteAsset>();
             spriteAssetNames = spriteAssetNames
-                .Where(spriteAssetName => !MoreQOD.spriteAssets.ContainsKey(spriteAssetName)).ToList();
+                .Where(spriteAssetName => !MoreQOD.spriteManager.spriteAssets.ContainsKey(spriteAssetName)).ToList();
             if (spriteAssetNames.Count == 0) return;
             foreach (TMP_Text tmpText in Object.FindObjectsOfType<TMP_Text>())
             {
@@ -44,10 +42,10 @@ namespace MoreQOD
                 List<string> spriteAssetNamesCopy = new List<string>(spriteAssetNames);
                 foreach (string spriteAssetName in spriteAssetNamesCopy)
                 {
-                    if (!MoreQOD.spriteAssets.ContainsKey(spriteAssetName) &&
+                    if (!MoreQOD.spriteManager.spriteAssets.ContainsKey(spriteAssetName) &&
                         tmpText.spriteAsset.name == spriteAssetName)
                     {
-                        MoreQOD.spriteAssets[spriteAssetName] = tmpText.spriteAsset;
+                        MoreQOD.spriteManager.spriteAssets[spriteAssetName] = tmpText.spriteAsset;
                         spriteAssetNames.Remove(spriteAssetName);
                         // MelonLogger.Msg(spriteAssetName);                        
                     } 
@@ -144,7 +142,8 @@ namespace MoreQOD
                 }, 0);
             }
         }
-        public static void IterateChildren(GameObject gameObject, Action<GameObject, int> childHandler, int baseLayer)
+
+        private static void IterateChildren(GameObject gameObject, Action<GameObject, int> childHandler, int baseLayer)
         {
             DoIterate(gameObject, childHandler, baseLayer);
         }

@@ -1,9 +1,6 @@
 ﻿using System.Collections.Generic;
-using System.Reflection;
-using Death.Run.UserInterface.Items;
-using HarmonyLib;
+using Death.ResourceManagement;
 using MelonLoader;
-using TMPro;
 using UnityEngine;
 
 namespace MoreQOD
@@ -12,13 +9,13 @@ namespace MoreQOD
     {
         public static readonly Dictionary<string, Material> Materials = new();
 
-        public static readonly Dictionary<string, TMP_SpriteAsset> spriteAssets = new();
 
         public static bool IsRun;
         public static SpriteManager spriteManager;
 
         public override void OnInitializeMelon()
         {
+            
             spriteManager = new SpriteManager();
             ShopImprovements.Init();
             // Event.AddListener(new EventListener<Event_InteractableFocusGained>(FindButtonSpriteAsset));
@@ -41,7 +38,7 @@ namespace MoreQOD
                     break;
             }
 
-            LoggerInstance.Msg($"Scene {sceneName} with build index {buildIndex} has been loaded!");
+            // LoggerInstance.Msg($"Scene {sceneName} with build index {buildIndex} has been loaded!");
         }
 
         public override void OnLateUpdate()

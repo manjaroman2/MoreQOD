@@ -45,7 +45,7 @@ namespace MoreQOD
 
             if (markerSprite == null)
             {
-                MelonLogger.Msg($"No marker sprite found for rarity {pickUp.Item.Rarity}");
+                MelonLogger.Error($"No marker sprite found for rarity {pickUp.Item.Rarity}");
             }
             else
             {

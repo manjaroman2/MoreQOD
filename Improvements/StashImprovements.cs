@@ -1,7 +1,5 @@
 using System.Collections.Generic;
 using System.Reflection;
-using Death.App;
-using Death.Items;
 using Death.Run.UserInterface.Items;
 using HarmonyLib;
 using MelonLoader;

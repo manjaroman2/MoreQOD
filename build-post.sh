@@ -12,8 +12,20 @@ usage() {
     echo "Options: "
     echo "Debug"
     echo "Release"
-    echo "z  (Zip)"
+    echo "ReleaseZip"
 }
+install() {
+    echo "rm ${moddir}/${name}Assets"
+    rm "${moddir}/${name}Assets" 
+    cp "${asset}" "${moddir}/${name}Assets" 
+    echo "${asset} -> ${moddir}/${name}Assets" 
+    
+    echo "rm ${mods}/${dll}"
+    rm "${mods}/${dll}"
+    cp "${source}" "${mods}/${dll}"
+    echo "${source} -> ${mods}/${dll}"
+}
+
 if [ -z "$1" ]; then
     usage
     exit 1
@@ -25,7 +37,9 @@ else
     if [ $1 = "Release" ]; then
         source="${source}/Release/${dll}"
     else
-        if [ $1 = "z" ]; then
+        if [ $1 = "ReleaseZip" ]; then
+            source="${source}/Release/${dll}"
+            install
             rm "${name}.zip"
             zip -r "${name}.zip" "${mods}/${name}.dll" "${moddir}"
             exit 1
