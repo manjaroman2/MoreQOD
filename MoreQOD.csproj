@@ -376,11 +376,9 @@
         </Reference>
     </ItemGroup>
     <ItemGroup>
-        <Compile Include="Features\GUI_XpRange.cs" />
         <Compile Include="Features\ItemMarkers.cs" />
-        <Compile Include="Features\XpRange.cs" />
-        <Compile Include="Features\XpRangeMonoBehaviour.cs" />
         <Compile Include="Improvements\ShopImprovements.cs" />
+        <Compile Include="Improvements\ShopRerollButton.cs" />
         <Compile Include="Improvements\StashImprovements.cs" />
         <Compile Include="MoreQOD.cs" />
         <Compile Include="Properties\AssemblyInfo.cs"/>

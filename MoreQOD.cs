@@ -43,26 +43,27 @@ namespace MoreQOD
 
         public override void OnLateUpdate()
         {
-            if (Input.GetKeyDown(KeyCode.R))
-            {
-                ShopImprovements.Reroll();
-            }
-            else if (Input.GetKeyDown(KeyCode.U))
-            {
-                ShopImprovements.Upgrade();
-            }
-            else if (Input.GetKeyDown(KeyCode.M))
-            {
-                XpRange.toggle();
-            }
-            else if (Input.GetKeyDown(KeyCode.O))
-            {
-                StashImprovements.NextPage();
-            }
-            else if (Input.GetKeyDown(KeyCode.P))
-            {
-                StashImprovements.PreviousPage();
-            }
+            // if (Input.GetKeyDown(KeyCode.R))
+            // {
+            //     ShopImprovements.Reroll();
+            // }
+            // else if (Input.GetKeyDown(KeyCode.U))
+            // {
+            //     ShopImprovements.Upgrade();
+            // }
+            // else if (Input.GetKeyDown(KeyCode.M))
+            // {
+            //     XpRange.toggle();
+            // }
+            
+            // else if (Input.GetKeyDown(KeyCode.O))
+            // {
+            //     StashImprovements.NextPage();
+            // }
+            // else if (Input.GetKeyDown(KeyCode.P))
+            // {
+            //     StashImprovements.PreviousPage();
+            // }
         }
     }
 }

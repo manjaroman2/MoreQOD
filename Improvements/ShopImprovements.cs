@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Claw.Core.CustomAttributes;
 using Claw.Core.Structures;
 using Claw.UserInterface.Selection;
 using Death;
@@ -20,12 +19,13 @@ using HarmonyLib;
 using MelonLoader;
 using TMPro;
 using UnityEngine;
-using UnityEngine.Events;
+using UnityEngine.Localization.Components;
 using UnityEngine.UI;
 using Object = UnityEngine.Object;
 
 namespace MoreQOD
 {
+    // ugly ahh code
     public static class ShopImprovements
     {
         private static readonly MethodInfo _GetTreasureClassWeightsForTimeMethod = typeof(ShopGenerator)
@@ -137,6 +137,7 @@ namespace MoreQOD
             }
         }
 
+        /* 
         [RequireComponent(typeof(SelectableObject))]
         private class RerollButton : MonoBehaviour
         {
@@ -225,7 +226,125 @@ namespace MoreQOD
                 _animator.SetTrigger(Trigger_Select);
             }
         }
+        
+        */
+        private class RerollButton : ClawSelectable<RerollButton>
+          {
+            // [SerializeField]
+            // private GUI_ItemIcon _icon;
+            // [SerializeField]
+            // private GameObject _highlight;
+            // [SerializeField]
+            // private GameObject _lockIcon;
+            // [SerializeField]
+            // private ItemSlotNeighbourData _neighbours;
+            // private ItemSlot _slot;
+            private RectTransform _rectTransform;
+            // private IItemController _controller;
+            // public GUI_SidePlacement.Side InfoSidePlacement;
+            private bool _subscribed;
 
+            // public GUI_ItemIcon Icon => this._icon;
+            //
+            // public ItemSlot Slot => this._slot;
+
+            public RectTransform RectTransform => this._rectTransform;
+
+            protected override void Awake()
+            {
+              base.Awake();
+              this._rectTransform = this.GetComponent<RectTransform>();
+              this.SetInteractionValue(this);
+            }
+
+            // private void Start()
+            // {
+            //   this._neighbours.Apply<GUI_ItemSlot>((ClawSelectable<GUI_ItemSlot>) this);
+            // }
+
+            // public void Init(IItemController controller) => this._controller = controller;
+
+            // public void SetReference(ItemSlot slot)
+            // {
+            //   this.Unsubscribe();
+            //   this._slot = slot;
+            //   if (this.gameObject.activeInHierarchy)
+            //     this.Subscribe();
+            //   this.UpdateIcon();
+            //   this.ShowLockIcon(false);
+            // }
+
+            // public void ShowLockIcon(bool shown) => this._lockIcon.gameObject.SetActive(shown);
+
+            // public void UpdateSaturation()
+            // {
+            //   ItemSlot slot = this._slot;
+            //   if (slot == null || !slot.IsFull)
+            //     return;
+            //   this._icon.SetSaturated(this._slot.Item.Type == ItemType.Lore || this._controller.InspectedCharacterCanEquip((IReadOnlyItem) this._slot.Item));
+            // }
+
+            public GameObject Resolve() => this.gameObject;
+
+            private void OnEnable()
+            {
+              this.Subscribe();
+              // if (this._slot == null)
+              //   return;
+              this.UpdateIcon();
+            }
+
+            private new void OnDisable()
+            {
+              this.Unsubscribe();
+              // this._highlight.gameObject.SetActive(false);
+              this.Deselect();
+            }
+
+            private void Unsubscribe()
+            {
+              // if (this._slot == null)
+              //   return;
+              // this._slot.OnChangeEv -= new ItemSlot.ItemSlotChanged(this.OnChange);
+              this._subscribed = false;
+            }
+
+            private void Subscribe()
+            {
+              // if (this._slot == null || this._subscribed)
+              //   return;
+              // this._slot.OnChangeEv += new ItemSlot.ItemSlotChanged(this.OnChange);
+              this._subscribed = true;
+            }
+
+            private void OnChange(Item oldItem, Item newItem)
+            {
+              if (!this.gameObject.activeInHierarchy)
+                return;
+              this.UpdateIcon();
+              if (!this.IsSelected)
+                return;
+              this.Deselect();
+              this.Select();
+            }
+
+            private void UpdateIcon()
+            {
+              // this._icon.Set(this._slot.Item);
+              // this.UpdateSaturation();
+            }
+          }
+        private static void OnSelect(GameObject gameObject)
+        {
+            MelonLogger.Msg("select");
+            
+        }
+        private static void OnDeselect(GameObject gameObject)
+        {
+            MelonLogger.Msg("Deselect");
+            
+        }
+        
         [HarmonyPatch(typeof(GUI_Options))]
         internal static class PATCH_GUI_Options
         {
@@ -262,36 +381,77 @@ namespace MoreQOD
         {
             [HarmonyPostfix]
             [HarmonyPatch(nameof(GUI_Shop.Init))]
-            private static void POST_Init(ref GUI_Shop __instance, ref GUI_ShopTabManager ____shopTabs)
+            private static void POST_Init(ref GUI_Shop __instance)
             {
                 MelonLogger.Msg("GUI_Shop.Init POST");
+
+
+                GameObject GUI_Panel_Shop = __instance.gameObject;
+                GameObject Tabs = GUI_Panel_Shop.transform.GetChild(0).gameObject;
+                GameObject MerchantTabPrefab = Tabs.transform.GetChild(0).gameObject;
+
+                GameObject GUI_ShopTab_RerollButton = Object.Instantiate(MerchantTabPrefab, Tabs.transform);
+                GUI_ShopTab_RerollButton.transform.SetScaleX(0.6f);
+                GameObject GUI_ShopTab_RerollButton_StateCurrent = GUI_ShopTab_RerollButton.transform.GetChild(1).gameObject;
+                Image RerollButtonImage = GUI_ShopTab_RerollButton_StateCurrent.GetComponent<Image>();
+                RerollButtonImage.sprite = MoreQOD.spriteManager.RerollButton[0];
+                
+                GameObject GUI_ShopTab_RerollButton_Text = GUI_ShopTab_RerollButton.transform.GetChild(2).gameObject;
+                LocalizedMonoBehaviour localizedMonoBehaviour =
+                    GUI_ShopTab_RerollButton_Text.GetComponent<LocalizeStringEvent>();
+                localizedMonoBehaviour.enabled = false;
                 
                 
+                // TextMeshProUGUI textMeshProUGUI = GUI_ShopTab_RerollButton_Text.GetComponent<TextMeshProUGUI>();
+                // textMeshProUGUI.spriteAsset = MoreQOD.spriteManager.RerollSpriteAsset;
+                // textMeshProUGUI.text = "<sprite=0>LOL";
                 
-                // Bad reference 
-                // GameObject prefab = ____shopTabs.transform.GetChild(1).gameObject;
-                // MelonLogger.Msg(prefab);
-                // foreach (Component component1 in prefab.GetComponents(typeof(Component)))
+                // GameObject GoldIcon = new("GoldIcon");
+                // GoldIcon.transform.SetParent(GUI_ShopTab_RerollButton.transform.transform);
+                // TextMeshProUGUI goldIconTMPro = GoldIcon.gameObject.AddComponent<TextMeshProUGUI>();
+                // Utils.CopyValues(textMeshProUGUI, goldIconTMPro);
+                // goldIconTMPro.spriteAsset = MoreQOD.spriteManager.RerollSpriteAsset;
+                // goldIconTMPro.rectTransform.anchorMax = new Vector2(0.24f, 0.19f);
+                // goldIconTMPro.rectTransform.anchorMin = new Vector2(0.24f, 0.19f);
+                // goldIconTMPro.text = "TEST <sprite=0>";
+                // GoldIcon.gameObject.SetActive(true);
+                // GUI_ShopTab_RerollButton_Text.gameObject.SetActive(false);
+
+
+                // RectTransform rectTransform = RerollButton.GetComponent<RectTransform>();
+
+                // GameObject gameObject = new("Image");
+                // gameObject.transform.SetParent(__instance.transform);
+                // gameObject.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
+                // gameObject.AddComponent<Image>().sprite = MoreQOD.spriteManager.RerollButton[0];
+                // RectTransform component = gameObject.GetComponent<RectTransform>();
+                // Vector2 position = new (0.785f, 0.8815f);
+                // const float scale = 0.8f; 
+                // component.anchorMin = position;
+                // component.anchorMax = position;
+                // component.pivot = new Vector2(0.5f, 0.5f);
+                // gameObject.layer = 5; 
+                // component.localScale = new Vector3(scale, scale, scale);
+                //
+                // try
                 // {
-                //     MelonLogger.Msg(component1);
+                //     ClawSelectable<GameObject> selectable = gameObject.GetComponent<ClawSelectable<GameObject>>();
+                //         
+                //     if (selectable == null)
+                //     {
+                //         selectable = gameObject.AddComponent<ClawSelectable<GameObject>>();
+                //     }
+                //     selectable.OnSelectEv.AddListener(OnSelect);
+                //     selectable.OnDeselectEv.AddListener(OnDeselect);
+                //     
                 // }
-                // GameObject gameObject = Object.Instantiate(buttonPrefab);
+                // catch (Exception e)
+                // {
+                //     MelonLogger.Msg($"{e}");
+                // }
 
-                GameObject gameObject = new("Image");
-                // GameObject gameObject = Object.Instantiate(prefab);
-                gameObject.transform.SetParent(____shopTabs.transform);
-                gameObject.transform.localPosition = new Vector3(0.0f, 0.0f, 0.0f);
-                gameObject.AddComponent<Image>().sprite = MoreQOD.spriteManager.RerollButton[0];
-                RectTransform component = gameObject.GetComponent<RectTransform>();
-                Vector2 position = new (0.3f, 0.9f);
-                float scale = 0.25f; 
-                component.anchorMin = position;
-                component.anchorMax = position;
-                component.pivot = new Vector2(0.5f, 0.5f);
-                component.localScale = new Vector3(scale, scale, scale);
 
-                
-                
+
 
                 // TextMeshProUGUI goldGuiText =
                 //     AccessTools.Field(typeof(GUI_Gold), "_text").GetValue(____gold) as TextMeshProUGUI;

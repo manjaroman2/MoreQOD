@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Death.Data;
@@ -15,15 +16,34 @@ namespace MoreQOD
 {
     public static class Utils
     {
-        public static void PrintShopTreasureClasses()
+        public static string GetAllFootprints(Exception x)
         {
-            using IEnumerator<ShopTreasureClass> empEnumerator = Database.ShopTreasureClasses.GetEnumerator();
-            while (empEnumerator.MoveNext())
+            StackTrace st = new StackTrace(x, true);
+            StackFrame[] frames = st.GetFrames();
+            StringBuilder traceString = new StringBuilder();
+
+            foreach (StackFrame frame in frames)
             {
-                ShopTreasureClass sc = empEnumerator.Current;
-                MelonLogger.Msg($"{sc?.TreasureClass} {sc?.FirstAppearPlayTimeMin} {sc?.Weight}");
+                if (frame.GetFileLineNumber() < 1)
+                    continue;
+
+                traceString.Append("File: " + frame.GetFileName());
+                traceString.Append(", Method:" + frame.GetMethod().Name);
+                traceString.Append(", LineNumber: " + frame.GetFileLineNumber());
+                traceString.Append("  -->  ");
             }
+
+            return traceString.ToString();
         }
+        // public static void PrintShopTreasureClasses()
+        // {
+        //     using IEnumerator<ShopTreasureClass> empEnumerator = Database.ShopTreasureClasses.GetEnumerator();
+        //     while (empEnumerator.MoveNext())
+        //     {
+        //         ShopTreasureClass sc = empEnumerator.Current;
+        //         MelonLogger.Msg($"{sc?.TreasureClass} {sc?.FirstAppearPlayTimeMin} {sc?.Weight}");
+        //     }
+        // }
 
         public static void FindSpriteAssets(List<string> spriteAssetNames)
         {
@@ -157,6 +177,6 @@ namespace MoreQOD
                 DoIterate(o, childHandler, layer + 1);
             }
         }
-
     }
+    
 }
