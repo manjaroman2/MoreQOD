@@ -4,12 +4,12 @@ using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using Death.Data;
-using Death.Shop;
 using Death.WorldGen;
 using HarmonyLib;
 using MelonLoader;
 using TMPro;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace MoreQOD
@@ -18,9 +18,9 @@ namespace MoreQOD
     {
         public static string GetAllFootprints(Exception x)
         {
-            StackTrace st = new StackTrace(x, true);
+            StackTrace st = new(x, true);
             StackFrame[] frames = st.GetFrames();
-            StringBuilder traceString = new StringBuilder();
+            StringBuilder traceString = new();
 
             foreach (StackFrame frame in frames)
             {
@@ -47,29 +47,26 @@ namespace MoreQOD
 
         public static void FindSpriteAssets(List<string> spriteAssetNames)
         {
-            Dictionary<string, TMP_SpriteAsset> allSpriteAssets = new Dictionary<string, TMP_SpriteAsset>();
+            Dictionary<string, TMP_SpriteAsset> allSpriteAssets = new();
             spriteAssetNames = spriteAssetNames
-                .Where(spriteAssetName => !MoreQOD.spriteManager.spriteAssets.ContainsKey(spriteAssetName)).ToList();
+                .Where(spriteAssetName => !MoreQOD.Instance.spriteManager.spriteAssets.ContainsKey(spriteAssetName))
+                .ToList();
             if (spriteAssetNames.Count == 0) return;
             foreach (TMP_Text tmpText in Object.FindObjectsOfType<TMP_Text>())
             {
                 if (tmpText == null || tmpText.spriteAsset == null) continue;
                 if (!allSpriteAssets.ContainsKey(tmpText.spriteAsset.name))
-                {
                     allSpriteAssets[tmpText.spriteAsset.name] = tmpText.spriteAsset;
-                }
-                
-                List<string> spriteAssetNamesCopy = new List<string>(spriteAssetNames);
-                foreach (string spriteAssetName in spriteAssetNamesCopy)
-                {
-                    if (!MoreQOD.spriteManager.spriteAssets.ContainsKey(spriteAssetName) &&
+
+                List<string> spriteAssetNamesCopy = new(spriteAssetNames);
+                foreach (var spriteAssetName in spriteAssetNamesCopy)
+                    if (!MoreQOD.Instance.spriteManager.spriteAssets.ContainsKey(spriteAssetName) &&
                         tmpText.spriteAsset.name == spriteAssetName)
                     {
-                        MoreQOD.spriteManager.spriteAssets[spriteAssetName] = tmpText.spriteAsset;
+                        MoreQOD.Instance.spriteManager.spriteAssets[spriteAssetName] = tmpText.spriteAsset;
                         spriteAssetNames.Remove(spriteAssetName);
                         // MelonLogger.Msg(spriteAssetName);                        
-                    } 
-                }
+                    }
 
                 if (spriteAssetNames.Count == 0) break;
             }
@@ -77,12 +74,11 @@ namespace MoreQOD
             if (spriteAssetNames.Count > 0)
             {
                 foreach (var spriteAssetName in spriteAssetNames)
-                {
                     MelonLogger.Msg($"Could not find spriteAsset {spriteAssetName}");
-                }
 
                 MelonLogger.Msg(string.Join(", ", new List<string>(allSpriteAssets.Keys)));
-                MelonLogger.Msg("This isn't an issue, you probably don't have Quality Of Death installed, but this mod still works without it! (You'll be Missing the Gold Icon icon in shop though)");
+                MelonLogger.Msg(
+                    "This isn't an issue, you probably don't have Quality Of Death installed, but this mod still works without it! (You'll be Missing the Gold Icon icon in shop though)");
             }
         }
 
@@ -131,24 +127,22 @@ namespace MoreQOD
         {
             MelonLogger.Msg(Database.MapObjects);
             foreach (MapObjectData mo in Database.MapObjects.All)
-            {
                 MelonLogger.Msg(
                     $"{mo.Id}\n      {mo.Code}\n      {mo.Size}\n      {mo.Value}\n      {mo.Weight}\n      {mo.MaxInstances}\n      {mo.ResourcePath}\n      {mo.MapMarkerPath}\n      {mo.Tags}\n      {mo.Implementation}");
-            }
         }
 
         public static void DumpGameObject()
         {
-            foreach (GameObject rootGameObject in UnityEngine.SceneManagement.SceneManager.GetActiveScene()
+            foreach (GameObject rootGameObject in SceneManager.GetActiveScene()
                          .GetRootGameObjects())
             {
                 MelonLogger.Msg(rootGameObject);
                 IterateChildren(rootGameObject, (obj, i) =>
                 {
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new();
                     sb.Append(new string(' ', 2 * i));
                     sb.Append(i.ToString());
-                    sb.Append(" Fields:"); 
+                    sb.Append(" Fields:");
                     sb.Append(obj.GetType().GetFields(AccessTools.all).Length);
                     sb.Append(" Active:");
                     sb.Append(obj.activeInHierarchy);
@@ -158,7 +152,6 @@ namespace MoreQOD
                     sb.Append(" Name:");
                     sb.Append(obj.name);
                     MelonLogger.Msg(sb.ToString());
-                    
                 }, 0);
             }
         }
@@ -178,5 +171,4 @@ namespace MoreQOD
             }
         }
     }
-    
 }
