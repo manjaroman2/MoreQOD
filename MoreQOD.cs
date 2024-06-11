@@ -1,24 +1,54 @@
 ﻿using System.Collections.Generic;
-using Death.ResourceManagement;
+using Claw.UserInterface.Screens;
+using Death.App;
+using Death.App.StateManagement;
+using Death.TimesRealm;
+using Death.TimesRealm.UserInterface;
+using HarmonyLib;
 using MelonLoader;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MoreQOD
 {
     public class MoreQOD : MelonMod
     {
-        public static readonly Dictionary<string, Material> Materials = new();
+        public static MoreQOD Instance;
 
+        private readonly List<Feature> Features = new();
+        public readonly Dictionary<string, Material> Materials = new();
+        public GameManager dGameManager;
+        public GameStateManager dGameStateManager;
+        public ScreenManager FacadeLobbyScreenManager;
 
-        public static bool IsRun;
-        public static SpriteManager spriteManager;
+        public bool IsRun;
+        public SpriteManager spriteManager;
+        public StashSort StashSort;
 
         public override void OnInitializeMelon()
         {
-            
+            Instance = this;
+            MelonLogger.Msg("OnInitializeMelon");
             spriteManager = new SpriteManager();
-            ShopImprovements.Init();
-            // Event.AddListener(new EventListener<Event_InteractableFocusGained>(FindButtonSpriteAsset));
+
+            addFeatures();
+
+            HarmonyInstance.Patch(
+                typeof(Facade_Lobby).GetMethod(nameof(Facade_Lobby.Init), AccessTools.all, null,
+                    new[] { typeof(ILobbyGameState) }, null),
+                postfix: new HarmonyMethod(typeof(MoreQOD).GetMethod(nameof(Facade_Lobby__Init__Postfix),
+                    AccessTools.all)));
+        }
+
+        private void addFeatures()
+        {
+            Features.Add(new ItemMarkers(false));
+            StashSort = new StashSort();
+            Features.Add(StashSort);
+
+            foreach (Feature feature in Features)
+                if (feature is Hookable fHookable && feature.isEnabled())
+                    fHookable.addHarmonyHooks();
         }
 
         public override void OnSceneWasLoaded(int buildIndex, string sceneName)
@@ -32,38 +62,30 @@ namespace MoreQOD
                     break;
                 case "Scene_TimesRealm":
                     IsRun = false;
-                    ShopImprovements.OnRunExit();
-                    // Utils.FindSpriteAssets(new List<string>(new[]
-                    //     { "_S_ButtonPrompts", "TextIcons_Items", "_S_ButtonPrompts_Small" }));
+                    break;
+                case "Scene_LobbyGUI":
+                    break;
+                case "Scene_Bootstrap":
+                    dGameManager = SceneManager.GetActiveScene().GetRootGameObjects()[0].GetComponent<GameManager>();
+                    break;
+                default:
+                    LoggerInstance.Msg($"Scene {sceneName} with build index {buildIndex} has been loaded!");
                     break;
             }
+        }
 
-            // LoggerInstance.Msg($"Scene {sceneName} with build index {buildIndex} has been loaded!");
+        private static void Facade_Lobby__Init__Postfix(ILobbyGameState state, Facade_Lobby __instance)
+        {
+            Instance.FacadeLobbyScreenManager =
+                (ScreenManager)typeof(Facade_Lobby).GetField("_screenManager", AccessTools.all)?.GetValue(__instance);
         }
 
         public override void OnLateUpdate()
         {
-            // if (Input.GetKeyDown(KeyCode.R))
-            // {
-            //     ShopImprovements.Reroll();
-            // }
-            // else if (Input.GetKeyDown(KeyCode.U))
-            // {
-            //     ShopImprovements.Upgrade();
-            // }
-            // else if (Input.GetKeyDown(KeyCode.M))
-            // {
-            //     XpRange.toggle();
-            // }
-            
-            // else if (Input.GetKeyDown(KeyCode.O))
-            // {
-            //     StashImprovements.NextPage();
-            // }
-            // else if (Input.GetKeyDown(KeyCode.P))
-            // {
-            //     StashImprovements.PreviousPage();
-            // }
+            if (Input.GetKeyDown(KeyCode.S))
+                if (FacadeLobbyScreenManager != null)
+                    if (FacadeLobbyScreenManager.CurrentScreen is Screen_Stash)
+                        StashSort.sortSelectedPage();
         }
     }
 }
